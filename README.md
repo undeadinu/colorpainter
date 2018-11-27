@@ -1,4 +1,4 @@
-![](fangyexu.com/images/colorpainter.jpg)
+![](http://fangyexu.com/images/colorpainter.jpg)
 
 # Introduction
 
