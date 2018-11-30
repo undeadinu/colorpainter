@@ -9,6 +9,7 @@
 
 		<script src="./js/Detector.js"></script>
 		<script src="./js/libs/stats.min.js"></script>
+		<script src="./js/libs/dat.gui.min.js"></script>
 		<script src="./js/controls/OrbitControls.js"></script>
 
 		<script src="./js/_custom/ColorGradient_Influence.js"></script>
@@ -47,11 +48,39 @@
 				background-color: #f90;
 				color: #000;
 			}
+
+			#controls {
+				position: fixed;
+				left: 50%;
+				margin-left: -100px;
+				bottom: 20px;
+				width: 100px;
+				height: 40px;
+				background-color: #000;
+				border-radius: 20px;
+				cursor: pointer;
+				z-index: 9999;
+			}
+			#controls:hover {
+				opacity: 0.8;
+
+			}
+			#btn_download {
+				position: relative;
+				margin: 0 auto;
+				margin-top: 7px;
+				width: 24px;
+				height: 24px;
+				background-image: url('images/download.png');
+				background-size: cover;
+			}
 		</style>
 	</head>
 <body>
 
 	<div id="container"></div>
+
+	<div id="controls" onclick="downloadImage()"><div id="btn_download"></div></div>
 
 	<div id="palette">
 		<input class="jscolor" id="color_0" onchange="update( id, this.jscolor )" value="cc66ff">
@@ -259,7 +288,7 @@
 	</script>
 
 	<script type="text/javascript">
-		var cameraRTT, camera, sceneRTT, sceneScreen, scene, renderer, zmesh1, zmesh2;
+		var cameraRTT, camera, sceneRTT, sceneScreen, scene, renderer, zmesh1, zmesh2, stats, gui;
 
 		var frame = 0;
 
@@ -268,12 +297,28 @@
 
 		var rtTexture, material, quad;
 
+		var params = {
+			color0 : '#9B50ED',
+			color1 : '#69D5FF',
+			color2 : '#FFBD6E',
+			color3 : '#FF77BC',
+			color4 : '#43FFB3',
+			color5 : '#5E71FF',
+			refreshColor : function() { 
+				testRefreshColor();
+			},
+			resetPattern : function() {
+				testRefreshPattern();
+			}
+		};
+
 		init();
+		buildControls();
 		animate();
 
 		function init() {
 			// Renderer
-			renderer = new THREE.WebGLRenderer({ antialias: true });
+			renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
 			renderer.setPixelRatio( window.devicePixelRatio );
 			renderer.setSize( window.innerWidth, window.innerHeight );
 			renderer.autoClear = false;
@@ -350,7 +395,9 @@
 			var controls = new THREE.OrbitControls( camera, renderer.domElement );
 			// Stats Info
 			stats = new Stats();
+			gui = new dat.GUI();
 			container.appendChild( stats.dom );
+			renderer.domElement.setAttribute('id','canvas_painter');
 		}
 
 
@@ -381,6 +428,58 @@
 
 			renderer.render( scene, camera );
 
+		}
+
+		function buildControls() {
+			//init GUI			
+			var colorsgroup = gui.addFolder('Color Scheme');
+			colorsgroup.open();
+
+			colorsgroup.addColor( params, 'color0' ).onChange(function(e){
+				BaseCanvas2d.colorscheme_1[ 0 ] = e.replace('#','')
+			});		
+
+			colorsgroup.addColor( params, 'color1' ).onChange(function(e){
+				BaseCanvas2d.colorscheme_1[ 1 ] = e.replace('#','')
+			});
+
+			colorsgroup.addColor( params, 'color2' ).onChange(function(e){
+				BaseCanvas2d.colorscheme_1[ 2 ] = e.replace('#','')
+			});
+
+			colorsgroup.addColor( params, 'color3' ).onChange(function(e){
+				BaseCanvas2d.colorscheme_1[ 3 ] = e.replace('#','')
+			});
+
+			colorsgroup.addColor( params, 'color4' ).onChange(function(e){
+				BaseCanvas2d.colorscheme_1[ 4 ] = e.replace('#','')
+			});
+
+			colorsgroup.addColor( params, 'color5' ).onChange(function(e){
+				BaseCanvas2d.colorscheme_1[ 5 ] = e.replace('#','')
+			});
+
+			gui.add( params, 'refreshColor' );
+
+			gui.add( params, 'resetPattern' );
+
+			gui.open();
+
+		}
+
+		function downloadImage() {
+			console.log('downloading...')
+
+			var imageData = canvas_painter.toDataURL("image/png").replace("image/png", "image/octet-stream"); 
+			// Convert image to 'octet-stream' (Just a download, really)
+
+		    var save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
+		    save_link.href = imageData;
+		    save_link.download = 'download.png'; 
+		   
+		    var event = document.createEvent('MouseEvents');
+		    event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+		    save_link.dispatchEvent(event);
 		}
 	</script>
 
