@@ -470,16 +470,41 @@
 		function downloadImage() {
 			console.log('downloading...')
 
-			var imageData = canvas_painter.toDataURL("image/png").replace("image/png", "image/octet-stream"); 
+			// var imageData = canvas_painter.toDataURL("image/png").replace("image/png", "image/octet-stream"); 
+			var imageData = canvas_painter.toDataURL("image/png"); 
 			// Convert image to 'octet-stream' (Just a download, really)
 
-		    var save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
-		    save_link.href = imageData;
-		    save_link.download = 'download.png'; 
+		    // var save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
+		    // save_link.href = imageData;
+		    // save_link.download = 'download.png'; 
 		   
-		    var event = document.createEvent('MouseEvents');
-		    event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-		    save_link.dispatchEvent(event);
+		    // var event = document.createEvent('MouseEvents');
+		    // event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+		    // save_link.dispatchEvent(event);
+		    downloadCanvas();
+		}
+
+		var downloadCanvas = function(){
+		    var link = document.createElement("a");
+			var imgData = canvas_painter.toDataURL({ format: 'png' });
+			var strDataURI = imgData.substr(22, imgData.length);
+			var blob = dataURLtoBlob(imgData);
+			var objurl = URL.createObjectURL(blob);
+
+			link.download = "helloWorld.png";
+
+			link.href = objurl;
+
+		    link.click();
+		} 
+
+		function dataURLtoBlob(dataurl) {
+		    var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+		        bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+		    while(n--){
+		        u8arr[n] = bstr.charCodeAt(n);
+		    }
+		    return new Blob([u8arr], {type:mime});
 		}
 	</script>
 
