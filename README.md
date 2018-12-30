@@ -1,4 +1,4 @@
-![](http://fangyexu.com/images/colorpainter.jpg)
+![](./images/colorpainter.jpg)
 
 # Introduction
 Color Painter is a tool for building wonderful color gradients on webpage.  
